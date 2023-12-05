@@ -7,7 +7,7 @@ const connection = async (app) => {
             throw new Error('MongoDB connection string is not defined.');
         }
 
-        const client = new MongoClient(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+        const client = new MongoClient(process.env.MONGO_URL);
 
         await client.connect();
 
