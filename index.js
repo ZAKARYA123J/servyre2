@@ -26,7 +26,9 @@ app.get('/', async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 });
-
+app.get('/hello',(req,res)=>{
+    res.send('hello word')
+})
 // ... (your existing imports)
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
