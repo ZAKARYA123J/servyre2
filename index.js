@@ -18,7 +18,7 @@ app.listen(port, async () => {
 
 app.get('/', async (req, res) => {
     try {
-        const collection = app.locals.client.db('project').collection('contact');
+        const collection = app.locals.client.db('project').collection('data');
         const data = await collection.find({}).toArray();
         res.status(200).json(data);
     } catch (error) {
