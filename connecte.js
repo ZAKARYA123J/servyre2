@@ -2,27 +2,17 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config();
 
 const connection = async (app) => {
+    const client = await new MongoClient(process.env.MONGO_URL)
+    const db = await client.db('project')
+
     try {
-        const client = new MongoClient(process.env.MONGO_URL, { useUnifiedTopology: true }); // useUnifiedTopology is recommended
-
-        await client.connect();
-
-        const db = client.db('project');
+        client.connect()
         app.locals.client = client;
-        app.locals.db = db;
-
-        console.log('Connected to MongoDB...');
-
-        // Close the MongoDB connection when the Node.js application is terminated
-        process.on('SIGINT', async () => {
-            await client.close();
-            console.log('MongoDB connection closed.');
-            process.exit(0);
-        });
+        app.locals.db = db
+        console.log("connected...")
     } catch (error) {
-        console.error('Error connecting to MongoDB:', error.message);
-        // Handle the error appropriately, you might want to throw it or exit the application
+        console.log(error)
     }
-};
+}
 
 module.exports = connection;
