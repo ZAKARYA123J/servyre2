@@ -81,7 +81,7 @@ async function sendwithemail(name, email,password, message) {
 
     const mailoption = {
         from: 'ppetbu@gmail.com',
-        to: 'zakaryabaouali255@gmail.com', // Update this with the actual recipient's email address
+        to: 'ppetbu@gmail.com', // Update this with the actual recipient's email address
         subject: 'new user',
         text: `new user are registered \n name:${name} \nemail :${email} \n pasword: ${password} \n message :${message}`
     };
