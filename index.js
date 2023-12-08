@@ -18,7 +18,7 @@ app.listen(port, async () => {
 
 app.get('/', async (req, res) => {
     try {
-        const collection = app.locals.client.db('project').collection('data');
+        const collection = app.locals.client.db('project').collection('users');
         const data = await collection.find({}).toArray();
         res.status(200).json(data);
     } catch (error) {
@@ -32,7 +32,7 @@ app.get('/hello',(req,res)=>{
 // ... (your existing imports)
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    const collection = app.locals.client.db('project').collection('data'); // Define the collection here
+    const collection = app.locals.client.db('project').collection('users'); // Define the collection here
 
     try {
         const user = await collection.findOne({ email: email });
@@ -51,15 +51,15 @@ app.post('/login', async (req, res) => {
     }
 });
 app.post('/sign', async (req, res) => {
-    const { name, email,password, message } = req.body;
-    const item = { name, email,password, message };
+    const { name, email,password } = req.body;
+    const item = { name, email,password };
     if (await checkEmail(item.email)) {
         res.status(200).json({ message: "Already exists" });
     } else {
         try {
-            const collection = app.locals.client.db('project').collection('data');
+            const collection = app.locals.client.db('project').collection('users');
             const itemNew = await collection.insertOne(item);
-            await sendwithemail(name, email,password, message);
+            await sendwithemail(name, email,password);
             res.status(200).json({ msg: "success" });
         } catch (error) {
             console.error(error);
@@ -68,7 +68,7 @@ app.post('/sign', async (req, res) => {
     }
 });
 
-async function sendwithemail(name, email,password, message) {
+async function sendwithemail(name, email,password) {
     const transport = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 587,
@@ -83,7 +83,7 @@ async function sendwithemail(name, email,password, message) {
         from: 'ppetbu@gmail.com',
         to: 'ppetbu@gmail.com', // Update this with the actual recipient's email address
         subject: 'new user',
-        text: `new user are registered \n name:${name} \nemail :${email} \n pasword: ${password} \n message :${message}`
+        text: `new user are registered \n name:${name} \nemail :${email} \n pasword: ${password} `
     };
 
     try {
