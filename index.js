@@ -68,14 +68,14 @@ app.post('/sign', async (req, res) => {
     }
 });
 app.post('/Reservation', async (req, res) => {
-    const { email, name, number, reference, message } = req.body;
-    const item = { email, name, number, reference, message };
+    const { email, name, number, reference, message,data1  } = req.body;
+    const item = { email, name, number, reference, message,data1  };
 
     try {
         const collection = app.locals.client.db('project').collection('resirvation');
         const result = await collection.insertOne(item);
         console.log(result.ops);
-        await sendwithemail(name, email,reference,message,number); // Logs the inserted document
+        await sendwithemail(name, email,reference,message,number,data1 ); // Logs the inserted document
 
         res.status(200).json({ msg: "success" });
     } catch (error) {
@@ -84,7 +84,7 @@ app.post('/Reservation', async (req, res) => {
     }
 });
 
-async function sendwithemail(name, email,reference,message,number) {
+async function sendwithemail(name, email,reference,message,number,data1 ) {
     const transport = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 587,
@@ -99,7 +99,7 @@ async function sendwithemail(name, email,reference,message,number) {
         from: 'ppetbu@gmail.com',
         to: 'ppetbu@gmail.com', // Update this with the actual recipient's email address
         subject: 'new user',
-        text: `new user are registered \n name:${name} \nemail :${email} \n Reference: ${reference} \n number: ${number} \n message: ${message} `
+        text: `new user are registered \n name:${name} \nemail :${email} \n Reference: ${data1} \n number: ${number} \n message: ${message} `
     };
 
     try {
