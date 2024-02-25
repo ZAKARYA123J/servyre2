@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const nodemailer=require('nodemailer')
-
+const { body, validationResult } = require('express-validator');
 const app = express();
 const connection = require('./connecte');
 const port = 8000;
@@ -67,22 +67,36 @@ app.post('/sign', async (req, res) => {
         }
     }
 });
-app.post('/Reservation', async (req, res) => {
-    const { email, name, number, reference, message,data1  } = req.body;
-    const item = { email, name, number, reference, message,data1  };
 
-    try {
-        const collection = app.locals.client.db('project').collection('resirvation');
-        const result = await collection.insertOne(item);
-        console.log(result.ops);
-        await sendwithemail(name, email,reference,message,number,data1 ); // Logs the inserted document
+app.post('/Reservation', [
+  body('email').isEmail(),
+  body('name').isString().notEmpty(),
+  body('number').isString().notEmpty(),
+  body('reference').isString().notEmpty(),
+  body('message').isString().optional(),
+  body('data1').isString().optional(),
+], async (req, res) => {
+  const errors = validationResult(req);
 
-        res.status(200).json({ msg: "success" });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: error.message });
-    }
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { email, name, number, reference, message, data1 } = req.body;
+  const item = { email, name, number, reference, message, data1 };
+
+  try {
+    const collection = app.locals.client.db('project').collection('reservation');
+    const result = await collection.insertOne(item);
+    console.log(result.ops);
+    await sendwithemail(name, email, reference, message, number, data1);
+    res.status(200).json({ msg: "success" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
 });
+
 
 async function sendwithemail(name, email,reference,message,number,data1 ) {
     const transport = nodemailer.createTransport({
